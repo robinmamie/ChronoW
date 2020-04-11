@@ -13,7 +13,7 @@ None for now
 ## To Do
 
 - [x] Timer
-- [ ] Point logic
+- [ ] Points logic
 - [ ] HTML+JS GUI
 - [ ] Database backend
 - [ ] Link to online databases
