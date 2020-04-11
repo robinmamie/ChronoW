@@ -2,6 +2,8 @@ package scoring
 
 import "github.com/robinmamie/ChronoW/internal/timer"
 
+// MaxCautions is the number of cautions required for one wrestler to be
+// eliminated
 const MaxCautions uint32 = 3
 
 // Bout stores all necessary information about a given bout
@@ -19,12 +21,13 @@ type Bout struct {
 	LastScore            Color
 }
 
-func (b Bout) Totals() (uint32, uint32) {
+// Totals returns the total number of points of both wrestlers
+func (b *Bout) Totals() (uint32, uint32) {
 	return b.RedWrestler.Total(), b.BlueWrestler.Total()
 }
 
 // Winner returns the current winner of the bout, and if it is finished or not
-func (b Bout) Winner() (Color, bool) {
+func (b *Bout) Winner() (Color, bool) {
 	scoreR, scoreB := b.Totals()
 
 	// Special victories (fall, disqualification, ...) overwrites everything
@@ -55,5 +58,6 @@ func (b Bout) Winner() (Color, bool) {
 	// TODO check who has the more "biggest" points
 	// TODO check number of cautions
 
-	return b.LastScore
+	// TODO implement "IsFinished" in timer
+	return b.LastScore, b.BoutTimer.TenthOfSecondsRemaining() == 0
 }

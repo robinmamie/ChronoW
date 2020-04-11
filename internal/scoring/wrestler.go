@@ -7,8 +7,10 @@ type Wrestler struct {
 	Country string
 }
 
+// Color designates the color of a wrestler
 type Color int
 
+// Represents 3 possibilities of color: either a wrestler, or none
 const (
 	NoWrestler Color = iota
 	Red
