@@ -28,36 +28,33 @@ func (b *Bout) Totals() (uint32, uint32) {
 
 // Winner returns the current winner of the bout, and if it is finished or not
 func (b *Bout) Winner() (Color, bool) {
+	// Base case
+	winner := b.LastScore
+	isFinished := b.BoutTimer.TenthOfSecondsRemaining() == 0 // TODO implement "IsFinished" in timer
 	scoreR, scoreB := b.Totals()
 
+	switch {
 	// Special victories (fall, disqualification, ...) overwrites everything
-	if b.SpecialVictory != NoWrestler {
-		return b.SpecialVictory, true
-	}
-
+	case b.SpecialVictory != NoWrestler:
+		winner, isFinished = b.SpecialVictory, true
 	// If a wrestler has MaxCautions, they are eliminated
-	if b.RedWrestler.Cautions == MaxCautions {
-		return Blue, true
-	}
-	if b.BlueWrestler.Cautions == MaxCautions {
-		return Red, true
-	}
-
-	// First, check if a wrestler has more points than another one (+ tech sup)
-	if scoreR > scoreB {
-		return Red, scoreR >= scoreB+b.TechnicalSuperiority
-	}
-	if scoreR < scoreB {
-		return Blue, scoreR+b.TechnicalSuperiority <= scoreB
-	}
-	// If no points were scored, no wrestlers are winning yet
-	if scoreR == 0 {
-		return NoWrestler, false
-	}
-
+	case b.RedWrestler.Cautions == MaxCautions:
+		winner, isFinished = Blue, true
+	case b.BlueWrestler.Cautions == MaxCautions:
+		winner, isFinished = Red, true
+	// First, check if a wrestler has more points than another one
+	// Also check if there is a tech. sup.
+	case scoreR > scoreB:
+		winner, isFinished = Red, scoreR >= scoreB+b.TechnicalSuperiority
+	case scoreR < scoreB:
+		winner, isFinished = Blue, scoreR+b.TechnicalSuperiority <= scoreB
 	// TODO check who has the more "biggest" points
-	// TODO check number of cautions
+	//case
+	case b.RedWrestler.Cautions < b.BlueWrestler.Cautions:
+		winner = Red
+	case b.RedWrestler.Cautions > b.BlueWrestler.Cautions:
+		winner = Blue
+	}
 
-	// TODO implement "IsFinished" in timer
-	return b.LastScore, b.BoutTimer.TenthOfSecondsRemaining() == 0
+	return winner, isFinished
 }
